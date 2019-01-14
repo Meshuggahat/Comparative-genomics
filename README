@@ -20,7 +20,7 @@ Gene transcripts : 57 525
 
 #=============================================================#
 # Isoforms filtering
-# 	Script : filter_isoforms.py $pep_fasta
+# 	Script : SCRIPTS/filter_isoforms.py $pep_fasta
 #	Result : SEQS/filtered.fasta
 #=============================================================#
 
@@ -45,7 +45,7 @@ We obtained 6 392 916 alignments.
 
 #=============================================================#
 # Alignments filtering
-# 	Script : filter_alignments.Rmd
+# 	Script : SCRIPTS/filter_alignments.Rmd
 #	Result : RESULTS/blastp_results_filtered.txt
 #=============================================================#
 
@@ -68,7 +68,7 @@ We used the "Merge blast" tool from Galaxy platform with default parameters.
 
 #=============================================================#
 # Clustering
-# 	Script : families_stats.Rmd
+# 	Script : SCRIPTS/families_stats.Rmd
 #	Result : RESULTS/SL_random_families.tabular
 #=============================================================#
 
@@ -86,8 +86,8 @@ SL  : 474 families (1 676 sequences)
 
 #=============================================================#
 # Calculating Ka/KS (Young and Nelson)
-# 	Script : ka_ks.py $pep_fasta $cds_fasta $alignments_file
-#	Result : SL_paml_results.txt
+# 	Script : SCRIPTS/ka_ks.py
+#	Result : RESULTS/SL_paml_results.txt
 #=============================================================#
 
 This script does the following step for each pairs of sequence within a family :
