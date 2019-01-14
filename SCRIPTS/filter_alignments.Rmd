@@ -1,0 +1,137 @@
+---
+title: "Comparative Genomics - Project - Blastp filtering"
+author: "Melissa SAICHI & Sandrine FARTEK"
+output: html_document
+---
+
+# DATA
+
+These data correspond to the result of blastp command. There are 4 500 699 alignment and 8 variables : </br>
+- qseqid : query sequence id </br>
+- sseqid : subject sequence id </br>
+- pident : percentage of identical matches </br>
+- qlen : query sequence length </br>
+- length : alignment length </br>
+- mismatch : number of mismatches </br>
+- gapopen :  number of gap openings </br>
+- evalue : expect value * </br>
+- bitscore : bit score * </br>
+- qstart : Start of alignment in query </br>
+- qend : End of alignment in query </br>
+
+* Description of e-value and bitscore here : http://www.metagenomics.wiki/tools/blast/evalue
+
+```{r, eval=FALSE}
+dat = read.table("blastp_result.txt", header = F)
+colnames(dat) = c("qseqid", "sseqid", "pident", "qlen", "length", "mismatch", "gapopen", "evalue", "bitscore", "qstart", "qend")
+save(dat, file = "blastp_result.RData")
+```
+
+```{r}
+load("../RESULTS/blastp_result.RData")
+
+colnames(dat)
+
+# Number of unique protein sequences
+length(unique(c(dat$qseqid, dat$sseqid)))
+```
+
+
+# ANALYSIS TO CHOSE THRESHOLDS
+
+```{r}
+# Remove alignment between identical proteins
+tmp = which(dat$qseqid == dat$sseqid)
+length(tmp)
+dat = dat[-tmp,]
+
+# Create a new column for coverage
+dat = cbind(dat, qcov = (dat$qend-dat$qstart)/dat$qlen)
+```
+
+```{r}
+# Histogram identity percentages
+hist(dat$pident, main = "Histogram of identity percentage")
+print("Identity")
+quantile(dat$pident, probs = c(0.25, 0.5, 0.75))
+
+# Histogram expect value
+hist(-log10(dat$evalue), main = "Histogram of the -log10 of the evalue")
+print("E-value")
+quantile(-log10(dat$evalue), probs = c(0.25, 0.5, 0.75))
+
+# Histogram expect bitscore
+hist(dat$bitscore, main = "Histogram of the bitscore")
+print("Bitscore")
+quantile(dat$bitscore, probs = c(0.25, 0.5, 0.75))
+
+# Histogram Coverage
+hist(dat$qcov, main = "Histogram of coverage")
+print("Coverage")
+quantile(dat$qcov, probs = c(0.25, 0.5, 0.75))
+```
+
+
+# FILTER DATA
+
+Before going to further study, we need to filter the result of the blastp all-vs-all. We use multiple criterion to do so : 
+  - alignment with 100% identity : they correspond to alignment of identical sequences
+  - identity < 60% (5 821 015 alignments)
+  - e-value > 10^-10 (159 599 alignments)
+  - coverage < 40% (120 986 alignments)
+  - bitscore :
+  
+Remaining 252 243 alignments corresponding to 25 649 proteins (39 021 in filtered fasta file).
+
+```{r}
+# Remove alignments with % identity < 40%
+tmp = which(dat$pident < 60)
+length(tmp)
+dat = dat[-tmp,]
+
+# Remove alignments with evalue > 0.01
+tmp = which(dat$evalue > 10^-10)
+length(tmp)
+dat = dat[-tmp,]
+
+# Remove alignments with coverage < 40%
+tmp = which(dat$qcov < 0.4)
+length(tmp)
+dat = dat[-tmp,]
+
+# Number of unique protein sequences left
+length(unique(c(dat$qseqid, dat$sseqid)))
+```
+
+
+# STATISTICS ON FILTERED DATA
+
+```{r}
+# Histogram identity percentages
+hist(dat$pident, main = "Histogram of identity percentage")
+print("Identity")
+quantile(dat$pident, probs = c(0.25, 0.5, 0.75))
+
+# Histogram expect value
+hist(-log10(dat$evalue), main = "Histogram of the -log10 of the evalue")
+print("E-value")
+quantile(-log10(dat$evalue), probs = c(0.25, 0.5, 0.75))
+
+# Histogram expect bitscore
+hist(dat$bitscore, main = "Histogram of the bitscore")
+print("Bitscore")
+quantile(dat$bitscore, probs = c(0.25, 0.5, 0.75))
+
+# Histogram Coverage
+hist(dat$qcov, main = "Histogram of coverage")
+print("Coverage")
+quantile(dat$qcov, probs = c(0.25, 0.5, 0.75))
+```
+
+
+# SAVE DATA
+
+```{r}
+write.table(dat[, -12], "blastp_result_filtered.txt", col.names = T, row.names = F, quote = F)
+```
+

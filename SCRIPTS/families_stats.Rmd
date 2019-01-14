@@ -1,0 +1,75 @@
+---
+title: "Comparative Genomics - Project - Families"
+author: "Melissa Saichi & Sandrine Fartek"
+output: html_document
+---
+
+```{r}
+library(plyr)
+library(ggplot2)
+```
+
+
+# DATA
+
+```{r}
+SL = read.table("../RESULTS/SL_pairs_blast_filtered_MERGEBLAST.tabular", header = T)
+MCL = read.table("../RESULTS/MCL_pairs_blast_filtered_MERGEBLAST.tabular", header = T)
+```
+
+
+```{r}
+# SL
+length(unique(SL$geneName))
+length(unique(SL$family))
+sizeSL = count(SL, "family")
+hist(sizeSL$freq)
+summary(sizeSL$freq)
+
+#ggplot(sizeSL, aes(x = freq)) + geom_histogram() + scale_x_log10()
+
+# MCL
+length(unique(MCL$geneName))
+length(unique(MCL$family))
+sizeMCL = count(MCL, "family")
+hist(sizeMCL$freq)
+summary(sizeMCL$freq)
+```
+
+# SELECT RANDOMLY FAMILIES
+
+MCL : 
+  - 6,239 families
+  - 63 different sizes
+  
+Select randomly 10% of families.
+
+```{r}
+length(unique(sizeMCL$freq))
+
+n = length(sizeMCL$family)
+rnd = sample(1:n, n/10)
+hist(sizeMCL[rnd,2])
+MCL_random = MCL[which(MCL$family %in% rnd),]
+```
+
+SL : 
+  - 4,741 families
+  - 45 different sizes
+  
+Select randomly 10% of families.
+
+```{r}
+length(unique(sizeSL$freq))
+
+n = length(sizeSL$family)
+rnd = sample(1:n, n/10)
+hist(sizeSL[rnd,2])
+SL_random = SL[which(SL$family %in% rnd),]
+```
+
+
+```{r}
+write.table(SL_random, "../RESULTS/SL_random_families.tabular", quote = F, row.names = F)
+write.table(MCL_random, "../RESULTS/MCL_random_families.tabular", quote = F, row.names = F)
+```

@@ -1,0 +1,94 @@
+#=============================================================#
+# Download sequences
+#=============================================================#
+
+Peptides sequences : 
+	ftp://ftp.ensemblgenomes.org/pub/plants/release-41/fasta/solanum_tuberosum/pep/Solanum_tuberosum.SolTub_3.0.pep.all.fa.gz
+CDS sequences :
+	ftp://ftp.ensemblgenomes.org/pub/plants/release-41/fasta/solanum_tuberosum/cds/Solanum_tuberosum.SolTub_3.0.cds.all.fa.gz
+
+#=============================================================#
+# Solanum tuberosum (potato)
+#=============================================================#
+
+Chromosomes : 4 * 12
+Bases : 727 Mbp
+Coding genes : 39 021
+Non-Coding genes : 1 315
+Gene transcripts : 57 525
+
+
+#=============================================================#
+# Isoforms filtering
+# 	Script : filter_isoforms.py $pep_fasta
+#	Result :
+#=============================================================#
+
+Keep the longest isoform for each genes.
+
+Before : 56 210 protein sequences 
+After  : 39 021 protein sequences
+
+
+#=============================================================#
+# Blastp : all-vs-all
+#	Result :
+#=============================================================#
+
+Execute a blastp of all our sequences between each others.
+
+We used the following output format :
+-outfmt "6 qseqid sseqid pident qlen length mismatch gapopen evalue bitscore qstart qend"
+
+We obtained 6 392 916 alignments.
+
+
+#=============================================================#
+# Alignments filtering
+# 	Script : filter_alignments.Rmd
+#	Result : 
+#=============================================================#
+
+We removed the following alignments :
+- % identity < 60 %
+- e-value > 10^-10
+- coverage < 40 %
+
+Before : 6 392 916 alignments (39 021 proteins)
+After  :   252 243 alignments (25 649 proteins)
+
+
+#=============================================================#
+# Merging
+# 	Result : 
+#=============================================================#
+
+We used the "Merge blast" tool from Galaxy platform with default parameters.
+
+
+#=============================================================#
+# Clustering
+# 	Script : families_stats.Rmd
+#	Result : 
+#=============================================================#
+
+We used 3 different clustering methods from Galaxy platform (FTAG Finder v3) 
+and computed some statistics about the size of the families for each method.
+
+MCL : 6 239 families
+SL  : 4 741 families
+
+As it would be highly time consuming to compute Ka/Ks for all the pairs within 
+all the families, we randomly selected 10% of families for each clustering method.
+
+
+#=============================================================#
+# Calculating Ka/KS (Young and Nelson)
+# 	Script : ka_ks.py $pep_fasta $cds_fasta $alignments_file
+#	Result : 
+#=============================================================#
+
+This script does the following step for each pairs of sequence within a family :
+	- Align proteic sequences with ClustalW.
+	- Align CDS sequences with Perl script.
+	- Calculate Ka/Ks with PAML.
