@@ -21,7 +21,7 @@ Gene transcripts : 57 525
 #=============================================================#
 # Isoforms filtering
 # 	Script : filter_isoforms.py $pep_fasta
-#	Result :
+#	Result : SEQS/filtered.fasta
 #=============================================================#
 
 Keep the longest isoform for each genes.
@@ -32,7 +32,7 @@ After  : 39 021 protein sequences
 
 #=============================================================#
 # Blastp : all-vs-all
-#	Result :
+#	Result : RESULTS/blastp_result.txt
 #=============================================================#
 
 Execute a blastp of all our sequences between each others.
@@ -46,7 +46,7 @@ We obtained 6 392 916 alignments.
 #=============================================================#
 # Alignments filtering
 # 	Script : filter_alignments.Rmd
-#	Result : 
+#	Result : RESULTS/blastp_results_filtered.txt
 #=============================================================#
 
 We removed the following alignments :
@@ -81,6 +81,8 @@ SL  : 4 741 families
 As it would be highly time consuming to compute Ka/Ks for all the pairs within 
 all the families, we randomly selected 10% of families for each clustering method.
 
+MCL : 624 families ()
+SL : 474 families
 
 #=============================================================#
 # Calculating Ka/KS (Young and Nelson)
