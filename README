@@ -60,7 +60,7 @@ After  :   252 243 alignments (25 649 proteins)
 
 #=============================================================#
 # Merging
-# 	Result : 
+# 	Result : RESULTS/SL_pairs_blast_filtered_MERGEBLAST.tabular
 #=============================================================#
 
 We used the "Merge blast" tool from Galaxy platform with default parameters.
@@ -69,7 +69,7 @@ We used the "Merge blast" tool from Galaxy platform with default parameters.
 #=============================================================#
 # Clustering
 # 	Script : families_stats.Rmd
-#	Result : 
+#	Result : RESULTS/SL_random_families.tabular
 #=============================================================#
 
 We used 3 different clustering methods from Galaxy platform (FTAG Finder v3) 
@@ -81,13 +81,13 @@ SL  : 4 741 families
 As it would be highly time consuming to compute Ka/Ks for all the pairs within 
 all the families, we randomly selected 10% of families for each clustering method.
 
-MCL : 624 families ()
-SL : 474 families
+MCL : 624 families (2 223 sequences)
+SL  : 474 families (1 676 sequences)
 
 #=============================================================#
 # Calculating Ka/KS (Young and Nelson)
 # 	Script : ka_ks.py $pep_fasta $cds_fasta $alignments_file
-#	Result : 
+#	Result : SL_paml_results.txt
 #=============================================================#
 
 This script does the following step for each pairs of sequence within a family :
